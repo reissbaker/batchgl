@@ -20,20 +20,22 @@
     }
   });
 
-  var AttributeSet = batchGl.Step.extend(),
+  var Program = batchGl.Step.extend(),
+      AttributeSet = batchGl.Step.extend(),
       Texture = batchGl.Step.extend();
 
   // WebGL rendering pipeline setup.
-  var program = new batchGl.Program(context),
-      attribA = new AttributeSet(program),
-      attribB = new AttributeSet(program),
-      textureA = new Texture(attribA),
-      textureB = new Texture(attribA),
-      textureC = new Texture(attribB),
-      leafA = new LoggingLeaf(textureA, 'A'),
-      leafB = new LoggingLeaf(textureB, 'B'),
-      leafC = new LoggingLeaf(textureC, 'C'),
-      leafD = new LoggingLeaf(textureC, 'C');
+  var root = new batchGl.Root(context),
+        program = new Program(root),
+          attribA = new AttributeSet(program),
+            textureA = new Texture(attribA),
+              leafA = new LoggingLeaf(textureA, 'A'),
+            textureB = new Texture(attribA),
+              leafB = new LoggingLeaf(textureB, 'B'),
+          attribB = new AttributeSet(program),
+            textureC = new Texture(attribB),
+              leafC = new LoggingLeaf(textureC, 'C'),
+              leafD = new LoggingLeaf(textureC, 'C');
 
   // Vertices.
   var vA = new batchGl.VertexSet(leafA),
@@ -44,6 +46,6 @@
   vB.buffer();
   vA2.buffer();
 
-  program.render();
+  root.render();
 
 }(document, batchGl);
