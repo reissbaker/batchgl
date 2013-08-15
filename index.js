@@ -6,7 +6,14 @@
 !function(document, batchGl) {
   'use strict';
 
+  // Stub out context.
   var context = { gl: {} };
+
+
+  /*
+   * Pipeline Class Definitions
+   * ---------------------------------------------------------------------------
+   */
 
   var LoggingLeaf = batchGl.Leaf.extend({
     init: function(parent, name) {
@@ -24,7 +31,12 @@
       AttributeSet = batchGl.Step.extend(),
       Texture = batchGl.Step.extend();
 
-  // WebGL rendering pipeline setup.
+
+  /*
+   * Pipeline Setup
+   * ---------------------------------------------------------------------------
+   */
+
   var root = new batchGl.Root(context),
         program = new Program(root),
           attribA = new AttributeSet(program),
@@ -37,10 +49,21 @@
               leafC = new LoggingLeaf(textureC, 'C'),
               leafD = new LoggingLeaf(textureC, 'C');
 
-  // Vertices.
+
+  /*
+   * Vertices
+   * ---------------------------------------------------------------------------
+   */
+
   var vA = new batchGl.VertexSet(leafA),
       vA2 = new batchGl.VertexSet(leafA),
       vB = new batchGl.VertexSet(leafB);
+
+
+  /*
+   * Rendering
+   * ---------------------------------------------------------------------------
+   */
 
   vA.buffer();
   vB.buffer();
