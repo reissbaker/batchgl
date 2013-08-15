@@ -47,7 +47,7 @@
           attribB = new AttributeSet(program),
             textureC = new Texture(attribB),
               leafC = new LoggingLeaf(textureC, 'C'),
-              leafD = new LoggingLeaf(textureC, 'C');
+              leafD = new LoggingLeaf(textureC, 'D');
 
 
   /*
@@ -57,7 +57,11 @@
 
   var vA = new batchGl.VertexSet(leafA),
       vA2 = new batchGl.VertexSet(leafA),
-      vB = new batchGl.VertexSet(leafB);
+      vB = new batchGl.VertexSet(leafB),
+      vC = new batchGl.VertexSet(leafC),
+      vC2 = new batchGl.VertexSet(leafC),
+      vC3 = new batchGl.VertexSet(leafC),
+      vD = new batchGl.VertexSet(leafD);
 
 
   /*
@@ -67,7 +71,11 @@
 
   vA.buffer();
   vB.buffer();
+  vC2.buffer();
+  vC3.buffer();
   vA2.buffer();
+  vD.buffer();
+  vC.buffer();
 
   root.render();
 
