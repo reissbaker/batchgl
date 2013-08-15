@@ -8,33 +8,37 @@
 
   var context = { gl: {} };
 
-  var LoggingUniform = batchGl.UniformSet.extend(function(texture, name) {
-    batchGl.UniformSet.call(this, texture);
-    this.name = name;
+  var LoggingLeaf = batchGl.Leaf.extend({
+    init: function(parent, name) {
+      this.name = name;
+    },
+    buffer: function() {
+      console.log('Buffering ' + this.name);
+    },
+    flush: function() {
+      console.log('Flushing ' + this.name);
+    }
   });
-  LoggingUniform.prototype.buffer = function() {
-    console.log('Buffering ' + this.name);
-  };
-  LoggingUniform.prototype.flush = function() {
-    console.log('Flushing ' + this.name);
-  };
+
+  var AttributeSet = batchGl.Step.extend(),
+      Texture = batchGl.Step.extend();
 
   // WebGL rendering pipeline setup.
   var program = new batchGl.Program(context),
-      attribA = new batchGl.AttributeSet(program),
-      attribB = new batchGl.AttributeSet(program),
-      textureA = new batchGl.Texture(attribA),
-      textureB = new batchGl.Texture(attribA),
-      textureC = new batchGl.Texture(attribB),
-      uniformA = new LoggingUniform(textureA, 'A'),
-      uniformB = new LoggingUniform(textureB, 'B'),
-      uniformC = new LoggingUniform(textureC, 'C'),
-      uniformD = new LoggingUniform(textureC, 'C');
+      attribA = new AttributeSet(program),
+      attribB = new AttributeSet(program),
+      textureA = new Texture(attribA),
+      textureB = new Texture(attribA),
+      textureC = new Texture(attribB),
+      leafA = new LoggingLeaf(textureA, 'A'),
+      leafB = new LoggingLeaf(textureB, 'B'),
+      leafC = new LoggingLeaf(textureC, 'C'),
+      leafD = new LoggingLeaf(textureC, 'C');
 
   // Vertices.
-  var vA = new batchGl.VertexSet(uniformA),
-      vA2 = new batchGl.VertexSet(uniformA),
-      vB = new batchGl.VertexSet(uniformB);
+  var vA = new batchGl.VertexSet(leafA),
+      vA2 = new batchGl.VertexSet(leafA),
+      vB = new batchGl.VertexSet(leafB);
 
   vA.buffer();
   vB.buffer();

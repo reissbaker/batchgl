@@ -4,9 +4,8 @@ build/batchgl.js:
 		lib/index.js \
 		lib/context.js \
 		lib/program.js \
-		lib/attribute.js \
-		lib/texture.js \
-		lib/uniform.js \
+		lib/step.js \
+		lib/leaf.js \
 		lib/vertices.js \
 		> $@
 
