@@ -79,4 +79,6 @@
 
   root.render();
 
+  console.log('Rendering finished');
+
 }(document, batchGl);
