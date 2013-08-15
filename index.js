@@ -70,11 +70,11 @@
    */
 
   vA.buffer();
+  vD.buffer();
   vB.buffer();
   vC2.buffer();
   vC3.buffer();
   vA2.buffer();
-  vD.buffer();
   vC.buffer();
 
   root.render();
