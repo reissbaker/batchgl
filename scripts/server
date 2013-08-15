@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if [ -z "$1" ]
+then
+  cat 1>&2 <<EOF
+Error: You must specify a port as the first parameter.
+If you're not sure which port to pick, try 8000.
+EOF
+  exit 1
+fi
+
+make rebuild > /dev/null
+
+python -m SimpleHTTPServer $1 > /dev/null 2>&1 &
+open "http://localhost:$1"
+
+echo "Started web server on port $1 with PID $!."
+read -p "Press any key to stop... "
+echo "Closing server. Goodbye!"
+
+kill $!
