@@ -1,0 +1,14 @@
+{
+  "name": "batchgl",
+  "version": "0.0.0",
+  "main": "build/batchgl.js",
+  "ignore": [
+    ".gitignore",
+    ".git/",
+    ".DS_Store",
+    "*.swp",
+    "*.swo",
+    "*.swn",
+    "*~"
+  ]
+}
