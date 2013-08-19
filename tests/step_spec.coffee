@@ -1,6 +1,6 @@
 {expect} = chai
-{Root, Step, Context} = batchGl
-{CanvasMock} = batchGlMocks
+{Root, Step, Context} = BatchGl
+{CanvasMock} = BatchGlMocks
 
 root = null
 context = null

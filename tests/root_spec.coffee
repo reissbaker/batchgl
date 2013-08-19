@@ -1,6 +1,6 @@
 {expect} = chai
-{Root} = batchGl
-{StepMock} = batchGlMocks
+{Root} = BatchGl
+{StepMock} = BatchGlMocks
 
 describe 'Root', ->
   describe 'constructor', ->

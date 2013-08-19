@@ -1,6 +1,6 @@
-{Context} = batchGl
+{Context} = BatchGl
 {expect} = chai
-{GlMock, CanvasMock} = batchGlMocks
+{GlMock, CanvasMock} = BatchGlMocks
 
 
 

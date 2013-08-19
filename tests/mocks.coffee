@@ -12,4 +12,4 @@ class StepMock
 
 class VertexSetMock
 
-window.batchGlMocks = {GlMock, CanvasMock, StepMock, VertexSetMock}
+window.BatchGlMocks = {GlMock, CanvasMock, StepMock, VertexSetMock}
