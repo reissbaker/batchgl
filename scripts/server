@@ -9,6 +9,7 @@ EOF
   exit 1
 fi
 
+make "test" > /dev/null
 make rebuild > /dev/null
 
 python -m SimpleHTTPServer $1 > /dev/null 2>&1 &
