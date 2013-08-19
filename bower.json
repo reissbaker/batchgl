@@ -9,7 +9,8 @@
     "*.swp",
     "*.swo",
     "*.swn",
-    "*~"
+    "*~",
+    "tests/*.js"
   ],
   "devDependencies": {
     "mocha": "1.12.0",

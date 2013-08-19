@@ -9,6 +9,10 @@ build/batchgl.js:
 		lib/vertices.js \
 		> $@
 
+.PHONY: test
+test:
+	./bower_components/coffee-script/bin/coffee -c tests/
+
 .PHONY: clean
 clean:
 	rm -rf build

@@ -3,39 +3,25 @@
   <head>
     <meta charset=utf-8>
     <title>BatchGl Test</title>
-    <style>
-      html, body, div, canvas {
-        padding: 0;
-        margin: 0;
-        border: none;
-      }
-      html, body {
-        width: 100%;
-        height: 100%;
-        background-color: black;
-      }
-      .bg-demo {
-        background-color: white;
-        width: 100%;
-        height: 100%;
-      }
-
-      canvas {
-        width: 100%;
-        height: 100%;
-        /* HAX */
-        position: absolute;
-        top: 0;
-        left: 0;
-      }
-    </style>
+    <link rel=stylesheet href=/bower_components/mocha/mocha.css>
   </head>
 
   <body>
-    <div class='bg-demo'>
+    <div id=mocha>
     </div>
 
+    <script src=/bower_components/chai/chai.js></script>
+    <script src=/bower_components/mocha/mocha.js></script>
     <script src=/build/batchgl.js></script>
+    <script>mocha.setup('bdd');</script>
+    <script src=/tests/mocks.js></script>
+    <script src=/tests/context_spec.js></script>
+    <script src=/tests/root_spec.js></script>
+    <script src=/tests/step_spec.js></script>
+    <script src=/tests/leaf_spec.js></script>
+    <script src=/tests/vertexset_spec.js></script>
+    <script src=/tests/ordering_spec.js></script>
+
     <script src=/index.js></script>
   </body>
 </html>
