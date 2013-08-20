@@ -11,7 +11,8 @@ build/batchgl.js:
 
 .PHONY: test
 test:
-	./bower_components/coffee-script/bin/coffee -c tests/
+	mkdir -p test/build
+	./bower_components/coffee-script/bin/coffee -o test/build -c test/specs
 
 .PHONY: clean
 clean:
