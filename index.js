@@ -2,6 +2,6 @@
   'use strict';
 
   mocha.checkLeaks();
-  mocha.globals(['chai', 'BatchGl', 'mocha', 'BatchGlMocks']);
+  mocha.globals(['chai', 'BatchGL', 'mocha', 'BatchGLMocks']);
   mocha.run();
 }(mocha);

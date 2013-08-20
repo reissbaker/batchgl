@@ -1,6 +1,6 @@
 {expect} = chai
-{Leaf, Root, Step, Context} = BatchGl
-{VertexSetMock, CanvasMock} = BatchGlMocks
+{Leaf, Root, Step, Context} = BatchGL
+{VertexSetMock, CanvasMock} = BatchGLMocks
 
 step = null
 root = null
