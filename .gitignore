@@ -6,5 +6,6 @@
 
 node_modules/
 bower_components/
-build/
-tests/*.js
+build/batchgl.min.js
+build/batchgl.min.js.gz
+test/build/*.js
