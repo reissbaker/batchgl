@@ -3,6 +3,7 @@ build/batchgl.js:
 	cat \
 		lib/index.js \
 		lib/context.js \
+		lib/treenode.js \
 		lib/root.js \
 		lib/step.js \
 		lib/leaf.js \

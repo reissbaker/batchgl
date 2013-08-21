@@ -116,12 +116,29 @@
 !function(exports) {
   'use strict';
 
-  exports._extendable(Root);
+  exports._extendable(TreeNode);
+  function TreeNode() {
+    this.init.apply(this, arguments);
+  }
+
+  TreeNode.prototype.init = function() {};
+  TreeNode.prototype.run = function() {};
+  TreeNode.prototype.render = function() {};
+
+  exports.TreeNode = TreeNode;
+
+}(BatchGL);
+!function(exports) {
+  'use strict';
+
+  var TreeNode = exports.TreeNode;
+
+  TreeNode.extend(Root);
   function Root(context) {
     this.context = context;
     this.children = [];
 
-    this.init.apply(this, arguments);
+    TreeNode.apply(this, arguments);
   }
 
 
@@ -129,9 +146,6 @@
    * Methods
    * ---------------------------------------------------------------------------
    */
-
-  Root.prototype.init = function() {};
-  Root.prototype.run = function() {};
 
   Root.prototype.render = function() {
     this.run();
@@ -152,7 +166,9 @@
 !function(exports) {
   'use strict';
 
-  exports._extendable(Step);
+  var TreeNode = exports.TreeNode;
+
+  TreeNode.extend(Step);
   function Step(parent) {
     this.context = null;
     this.parent = parent;
@@ -160,11 +176,8 @@
 
     parent.add(this);
 
-    this.init.apply(this, arguments);
+    TreeNode.apply(this, arguments);
   }
-
-  Step.prototype.init = function() {};
-  Step.prototype.run = function() {};
 
   Step.prototype.render = function() {
     this.run();
@@ -184,7 +197,9 @@
 !function(exports) {
   'use strict';
 
-  exports._extendable(Leaf);
+  var TreeNode = exports.TreeNode;
+
+  TreeNode.extend(Leaf);
   function Leaf(parent) {
     this.parent = parent;
     this.context = null;
@@ -192,7 +207,7 @@
 
     parent.add(this);
 
-    this.init.apply(this, arguments);
+    TreeNode.apply(this, arguments);
   }
 
 
@@ -200,9 +215,6 @@
    * Methods
    * ---------------------------------------------------------------------------
    */
-
-  Leaf.prototype.init = function() {};
-  Leaf.prototype.run = function() {};
 
   Leaf.prototype._bufferVertex = function(vertexSet) {
     this._buffer.unshift(vertexSet);
