@@ -8,27 +8,25 @@
       window.BatchGL = BatchGL;
       return BatchGL;
     },
-    extend: function(Base, Derived) {
-      var Temp = function() {};
-      Temp.prototype = Base.prototype;
+    extend: function(Base, derived) {
+      var Derived,
+          Temp = function() {};
 
+      if(typeof derived !== 'function') Derived = extendingConstructor(Base);
+      else Derived = derived;
+
+      Temp.prototype = Base.prototype;
       Derived.prototype = new Temp;
       Derived.prototype.constructor = Derived;
 
+      if(typeof derived === 'object') mixin(Derived.prototype, derived);
       mixin(Derived, Base);
 
       return Derived;
     },
     _extendable: function(Base) {
-      Base.extend = function(derived) {
-        var Derived;
-        if(typeof derived !== 'function') Derived = extendingConstructor(Base);
-        else Derived = derived;
-
-        BatchGL.extend(Base, Derived);
-        if(typeof derived === 'object') mixin(Derived.prototype, derived);
-
-        return Derived;
+      Base.extend = function(Derived) {
+        return BatchGL.extend(this, Derived);
       };
       return Base;
     }
