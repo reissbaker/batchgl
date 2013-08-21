@@ -281,7 +281,7 @@ Development Notes
 --------------------------------------------------------------------------------
 
 To run the tests, make sure you've run an `npm install` at some point, and then
-run `script/server 8000` (or pass in the numerical port of your choice).
+run `script/test 8000` (or pass in the numerical port of your choice).
 
 If you want to peruse the code, tell me about bugs, or submit patches: [a link
 to the repo](https://github.com/reissbaker/batchgl).
