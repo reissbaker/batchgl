@@ -133,8 +133,10 @@
    */
 
   Root.prototype.init = function() {};
+  Root.prototype.run = function() {};
 
   Root.prototype.render = function() {
+    this.run();
     for(var i = 0, l = this.children.length; i < l; i++) {
       this.children[i].render();
     }
@@ -164,8 +166,10 @@
   }
 
   Step.prototype.init = function() {};
+  Step.prototype.run = function() {};
 
   Step.prototype.render = function() {
+    this.run();
     for(var i = 0, l = this.children.length; i < l; i++) {
       this.children[i].render();
     }
@@ -200,6 +204,7 @@
    */
 
   Leaf.prototype.init = function() {};
+  Leaf.prototype.run = function() {};
 
   Leaf.prototype._bufferVertex = function(vertexSet) {
     this._buffer.unshift(vertexSet);
@@ -207,6 +212,7 @@
 
   Leaf.prototype.render = function() {
     var buffered = this._buffer.length !== 0;
+    this.run();
     while(this._buffer.length > 0) {
       this.buffer(this._buffer.pop());
     }
