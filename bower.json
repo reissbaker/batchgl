@@ -1,6 +1,6 @@
 {
   "name": "batchgl",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "main": "build/batchgl.js",
   "ignore": [
     ".gitignore",
