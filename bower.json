@@ -5,6 +5,7 @@
   "ignore": [
     ".gitignore",
     ".git/",
+    "node_modules/",
     ".DS_Store",
     "*.swp",
     "*.swo",
@@ -12,9 +13,5 @@
     "*~",
     "tests/*.js"
   ],
-  "devDependencies": {
-    "mocha": "1.12.0",
-    "chai": "1.7.2",
-    "coffee-script": "1.6.3"
-  }
+  "dependencies": {}
 }
