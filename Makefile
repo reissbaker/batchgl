@@ -9,6 +9,15 @@ build/batchgl.js:
 		lib/vertices.js \
 		> $@
 
+build/batchgl.min.js: build/batchgl.js
+	./node_modules/.bin/uglifyjs \
+		-m \
+		-c warnings=false,unsafe=true \
+		$< > $@
+
+build/batchgl.min.js.gz: build/batchgl.min.js
+	gzip -c $< > $@
+
 .PHONY: test
 test:
 	mkdir -p test/build
@@ -20,7 +29,7 @@ clean:
 	mkdir build
 
 .PHONY: build
-build: build/batchgl.js
+build: build/batchgl.js build/batchgl.min.js build/batchgl.min.js.gz
 
 .PHONY: rebuild
 rebuild: clean build
