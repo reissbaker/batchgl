@@ -31,13 +31,16 @@
         <h1>
 <a name="batchgl" class="anchor" href="#batchgl"><span class="octicon octicon-link"></span></a>BatchGL</h1>
 
-<p>A library that makes high-performance batched WebGL calls easy.</p>
+<p>Makes high-performance batched WebGL calls easy.</p>
 
-<p>BatchGL models a series of WebGL calls as a tree with vertex data buffered into
+<p>BatchGL models series of WebGL calls as a tree with vertex data buffered into
 the leaves. It renders the tree depth-first, so buffered vertices in leaves
 will get batched over together.  Leaves closer to each other will get rendered
 more closely to each other, allowing for fewer expensive context switches,
 texture buffering, etc.</p>
+
+<p>BatchGL is hosted on <a href="https://github.com/reissbaker/batchgl">Github</a> and is
+distributed under the MIT license. It's currently &lt;1kb minifed and compressed.</p>
 
 <h2>
 <a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
