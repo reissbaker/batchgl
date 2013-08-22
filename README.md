@@ -1,13 +1,16 @@
 BatchGL
 ================================================================================
 
-A library that makes high-performance batched WebGL calls easy.
+Makes high-performance batched WebGL calls easy.
 
-BatchGL models a series of WebGL calls as a tree with vertex data buffered into
+BatchGL models series of WebGL calls as a tree with vertex data buffered into
 the leaves. It renders the tree depth-first, so buffered vertices in leaves
 will get batched over together.  Leaves closer to each other will get rendered
 more closely to each other, allowing for fewer expensive context switches,
 texture buffering, etc.
+
+BatchGL is hosted on [Github](https://github.com/reissbaker/batchgl) and is
+distributed under the MIT license. It's currently <1kb minifed and compressed.
 
 
 Installation
