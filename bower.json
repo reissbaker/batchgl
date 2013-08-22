@@ -1,6 +1,12 @@
 {
   "name": "batchgl",
   "version": "0.0.1",
+  "description": "A library for easy WebGL batching.",
+  "license": "MIT",
+  "keywords": [
+    "webgl", "batch", "render",
+    "batching", "rendering"
+  ],
   "main": "build/batchgl.js",
   "ignore": [
     ".gitignore",
@@ -13,5 +19,6 @@
     "*~",
     "tests/*.js"
   ],
-  "dependencies": {}
+  "dependencies": {},
+  "devDependencies": {}
 }
