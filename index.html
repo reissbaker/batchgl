@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Batchgl by reissbaker</title>
+    <title>BatchGL by reissbaker</title>
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
@@ -15,7 +15,7 @@
   <body>
     <div class="wrapper">
       <header>
-        <h1>Batchgl</h1>
+        <h1>BatchGL</h1>
         <p>A library for easy WebGL batching.</p>
 
         <p class="view"><a href="https://github.com/reissbaker/batchgl">View the Project on GitHub <small>reissbaker/batchgl</small></a></p>
@@ -28,37 +28,334 @@
         </ul>
       </header>
       <section>
-        <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+        <h1>
+<a name="batchgl" class="anchor" href="#batchgl"><span class="octicon octicon-link"></span></a>BatchGL</h1>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+<p>A library that makes high-performance batched WebGL calls easy.</p>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
+<p>BatchGL models a series of WebGL calls as a tree with vertex data buffered into
+the leaves. It renders the tree depth-first, so buffered vertices in leaves
+will get batched over together.  Leaves closer to each other will get rendered
+more closely to each other, allowing for fewer expensive context switches,
+texture buffering, etc.</p>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p><code>bower install batchgl</code> or <code>npm install batchgl</code></p>
+
+<p>You can use the <code>build/batchgl.js</code> file as-is, or run <code>npm install &amp;&amp; make
+build</code> to get the minified and gzipped versions.</p>
+
+<h2>
+<a name="examples" class="anchor" href="#examples"><span class="octicon octicon-link"></span></a>Examples</h2>
+
+<p>Here's how you might set up a texture-rendering pipeline:</p>
+
+<div class="highlight"><pre>
+<span class="cm">/*</span>
+<span class="cm"> * One-time setup of the rendering pipeline starts here:</span>
+<span class="cm"> */</span>
+
+<span class="kd">var</span> <span class="nx">Program</span> <span class="o">=</span> <span class="nx">BatchGL</span><span class="p">.</span><span class="nx">Root</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="nx">vertexShader</span><span class="p">,</span> <span class="nx">fragmentShader</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// compile shaders, link program here</span>
+  <span class="p">},</span>
+  <span class="nx">run</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// tell WebGL to use the program</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="kd">var</span> <span class="nx">Texture</span> <span class="o">=</span> <span class="nx">BatchGL</span><span class="p">.</span><span class="nx">Step</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">program</span><span class="p">,</span> <span class="nx">image</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// setup</span>
+  <span class="p">},</span>
+  <span class="nx">run</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// buffer, bind textures</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="kd">var</span> <span class="nx">Uniform</span> <span class="o">=</span> <span class="nx">BatchGL</span><span class="p">.</span><span class="nx">Leaf</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// setup</span>
+  <span class="p">},</span>
+
+  <span class="nx">run</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// bind uniforms here</span>
+  <span class="p">},</span>
+
+  <span class="nx">buffer</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">vertexSet</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// buffer vertices to WebGL</span>
+  <span class="p">},</span>
+
+  <span class="nx">flush</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// call WebGL drawing methods</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="kd">var</span> <span class="nx">context</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">BatchGL</span><span class="p">.</span><span class="nx">Context</span><span class="p">(</span><span class="nx">canvas</span><span class="p">),</span>
+    <span class="nx">program</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Program</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="nx">vertexShader</span><span class="p">,</span> <span class="nx">fragmentShader</span><span class="p">),</span>
+    <span class="nx">sprite</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Texture</span><span class="p">(</span><span class="nx">program</span><span class="p">,</span> <span class="nx">spriteSheet</span><span class="p">),</span>
+    <span class="nx">otherSprite</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Texture</span><span class="p">(</span><span class="nx">program</span><span class="p">,</span> <span class="nx">spriteSheet2</span><span class="p">),</span>
+    <span class="nx">lion</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Uniform</span><span class="p">(</span><span class="nx">sprite</span><span class="p">,</span> <span class="nx">someCoordinates</span><span class="p">),</span>
+    <span class="nx">tiger</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Uniform</span><span class="p">(</span><span class="nx">sprite</span><span class="p">,</span> <span class="nx">otherCoordinates</span><span class="p">),</span>
+    <span class="nx">bear</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Uniform</span><span class="p">(</span><span class="nx">otherSprite</span><span class="p">,</span> <span class="nx">otherOtherCoordinates</span><span class="p">);</span>
+
+
+<span class="cm">/*</span>
+<span class="cm"> * One-time setup is finished. You can now create sets of vertices pointing to</span>
+<span class="cm"> * different leaves in the pipeline tree, and pass them around as renderable</span>
+<span class="cm"> * objects.</span>
+<span class="cm"> */</span>
+
+<span class="kd">var</span> <span class="nx">v1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">BatchGL</span><span class="p">.</span><span class="nx">VertexSet</span><span class="p">(</span><span class="nx">lion</span><span class="p">,</span> <span class="p">[</span> <span class="cm">/* some vertices */</span> <span class="p">]);</span>
+<span class="kd">var</span> <span class="nx">v2</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">BatchGL</span><span class="p">.</span><span class="nx">VertexSet</span><span class="p">(</span><span class="nx">lion</span><span class="p">,</span> <span class="p">[</span> <span class="cm">/* more vertices */</span> <span class="p">]);</span>
+<span class="kd">var</span> <span class="nx">v3</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">BatchGL</span><span class="p">.</span><span class="nx">VertexSet</span><span class="p">(</span><span class="nx">tiger</span><span class="p">,</span> <span class="p">[</span> <span class="cm">/* more vertices */</span> <span class="p">]);</span>
+<span class="kd">var</span> <span class="nx">v4</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">BatchGL</span><span class="p">.</span><span class="nx">VertexSet</span><span class="p">(</span><span class="nx">bear</span><span class="p">,</span> <span class="p">[</span> <span class="cm">/* more vertices */</span> <span class="p">]);</span>
+<span class="kd">var</span> <span class="nx">v5</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">BatchGL</span><span class="p">.</span><span class="nx">VertexSet</span><span class="p">(</span><span class="nx">bear</span><span class="p">,</span> <span class="p">[</span> <span class="cm">/* more vertices */</span> <span class="p">]);</span>
+
+<span class="cm">/*</span>
+<span class="cm"> * You can buffer vertices in any order: BatchGL will optimize the underlying</span>
+<span class="cm"> * calls so that it doesn't matter.</span>
+<span class="cm"> */</span>
+
+<span class="nx">v1</span><span class="p">.</span><span class="nx">buffer</span><span class="p">();</span>
+<span class="nx">v5</span><span class="p">.</span><span class="nx">buffer</span><span class="p">();</span>
+<span class="nx">v4</span><span class="p">.</span><span class="nx">buffer</span><span class="p">();</span>
+<span class="nx">v3</span><span class="p">.</span><span class="nx">buffer</span><span class="p">();</span>
+<span class="nx">v2</span><span class="p">.</span><span class="nx">buffer</span><span class="p">();</span>
+
+
+<span class="cm">/*</span>
+<span class="cm"> * The following renders any buffered vertices. It optimizes the underlying</span>
+<span class="cm"> * WebGL buffering and drawing according to the rendering tree set up above, to</span>
+<span class="cm"> * maximize batching and to minimize expensive context switches.</span>
+<span class="cm"> */</span>
+
+<span class="nx">program</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+</pre></div>
+
+<h2>
+<a name="api-docs" class="anchor" href="#api-docs"><span class="octicon octicon-link"></span></a>API Docs</h2>
 
 <h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+<a name="batchglcontext" class="anchor" href="#batchglcontext"><span class="octicon octicon-link"></span></a>BatchGL.Context</h3>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+<p>The BatchGL Context object holds a reference to a <code>&lt;canvas&gt;</code> element and its
+corresponding WebGL context.</p>
 
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
+<h4>
+<a name="methods" class="anchor" href="#methods"><span class="octicon octicon-link"></span></a>Methods:</h4>
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+<ul>
+<li>
+<code>new Context(canvas)</code>. The Context constructor takes a canvas object and
+initializes its <code>gl</code> object by calling the HTML5 <code>getContext</code> method.</li>
+<li>
+<code>.updateSize()</code>. This updates the <code>width</code> and <code>height</code> properties of the
+<code>&lt;canvas&gt;</code> element to be equal to their container's CSS box-sizing. It also
+updates the WebGL viewport to be the same.</li>
+</ul><h4>
+<a name="public-properties" class="anchor" href="#public-properties"><span class="octicon octicon-link"></span></a>Public Properties</h4>
 
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+<ul>
+<li>
+<code>canvas</code>, the <code>&lt;canvas&gt;</code> element.</li>
+<li>
+<code>gl</code>, the WebGL context object.</li>
+</ul><h3>
+<a name="batchgltreenode" class="anchor" href="#batchgltreenode"><span class="octicon octicon-link"></span></a>BatchGL.TreeNode</h3>
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+<p>TreeNode is the base class for any of the classes that make up the BatchGL
+rendering tree: <code>Root</code>, <code>Step</code>, and <code>Leaf</code>. TreeNodes are never instantiated
+directly, and are just a convenient holding place for shared callback stubs.</p>
 
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
+<h4>
+<a name="class-methods" class="anchor" href="#class-methods"><span class="octicon octicon-link"></span></a>Class Methods:</h4>
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+<ul>
+<li>
+<code>.extend(Derived)</code> sets up the prototype chain so that Derived extends the
+class, and also copies over any class methods from the base class to Derived.
+If Derived is a function, it will use the function as the constructor; if
+Derived is an object, it will create a constructor, make it extend the base
+class, and then add any properties from the given object to the derived
+constructor's prototype. In any case, it returns the derived constructor
+function.</li>
+</ul><h4>
+<a name="public-methods" class="anchor" href="#public-methods"><span class="octicon octicon-link"></span></a>Public Methods:</h4>
+
+<ul>
+<li>
+<code>new TreeNode()</code>. The TreeNode constructor takes any number of arguments, and
+passes them all to its overridable <code>init</code> method.</li>
+<li>
+<code>.init()</code>, a method stub. Client code can override the <code>init</code> method to do
+something when a node is initialized.</li>
+<li>
+<code>.run()</code>, a method stub. Client code can override the <code>run</code> method to do work
+when BatchGL is processing a <code>render</code> call and has reached the current node in
+the tree.</li>
+</ul><h4>
+<a name="framework-reserved-methods" class="anchor" href="#framework-reserved-methods"><span class="octicon octicon-link"></span></a>Framework-Reserved Methods</h4>
+
+<ul>
+<li>
+<code>.render()</code>, a method stub that gets overridden by the derived node classes.
+Client code probably shouldn't override this method. <code>render</code> is called to
+render the current node.</li>
+</ul><h3>
+<a name="batchglroot" class="anchor" href="#batchglroot"><span class="octicon octicon-link"></span></a>BatchGL.Root</h3>
+
+<p>The Root class defines the roots of rendering trees. You might set up a WebGL
+program in the root, and use it for all subsequent calls; if you have multiple
+programs, you might not do much here at all except for some basic environment
+setup.</p>
+
+<h4>
+<a name="public-methods-1" class="anchor" href="#public-methods-1"><span class="octicon octicon-link"></span></a>Public Methods</h4>
+
+<ul>
+<li>
+<code>new Root(context)</code> creates a new Root object for the given Context object.
+It also calls the overridable <code>.init()</code> method inherited from TreeNode.</li>
+<li>
+<code>.render()</code> calls the <code>.run()</code> method, and then calls <code>render</code> on all of the
+root's children.</li>
+</ul><h4>
+<a name="framework-reserved-methods-1" class="anchor" href="#framework-reserved-methods-1"><span class="octicon octicon-link"></span></a>Framework-Reserved Methods</h4>
+
+<ul>
+<li>
+<code>.add(child)</code> adds a TreeNode child to the Root. Steps (and Leaves) call this
+method automatically on their parents, so you shouldn't need to call this
+method manually when constructing a rendering tree.</li>
+</ul><h4>
+<a name="public-properties-1" class="anchor" href="#public-properties-1"><span class="octicon octicon-link"></span></a>Public Properties</h4>
+
+<ul>
+<li>
+<code>context</code> holds the Context object for the root.</li>
+</ul><h3>
+<a name="batchglstep" class="anchor" href="#batchglstep"><span class="octicon octicon-link"></span></a>BatchGL.Step</h3>
+
+<p>The Step class is for intermediate steps in the rendering tree. For example,
+you might bind textures in a step, which would ensure that any calls to the
+leaves beneath them would be batched into a single texture binding call. If
+you're using multiple programs, you probably want the programs to be
+implemented as Step classes underneath a single Root.</p>
+
+<h4>
+<a name="public-methods-2" class="anchor" href="#public-methods-2"><span class="octicon octicon-link"></span></a>Public Methods</h4>
+
+<ul>
+<li>
+<code>new Step(parent)</code> creates a new Step object underneath the given parent Root
+or Step node. It also calls the overridable <code>.init()</code> method inherited from
+TreeNode.</li>
+<li>
+<code>.render()</code>, much like the Root object, calls the Step's <code>run()</code> method and
+then calls <code>render</code> on all of its children.</li>
+</ul><h4>
+<a name="framework-reserved-methods-2" class="anchor" href="#framework-reserved-methods-2"><span class="octicon octicon-link"></span></a>Framework-Reserved Methods</h4>
+
+<ul>
+<li>
+<code>.add(child)</code>, like the Root's <code>.add()</code> method, adds a TreeNode child to the
+Step. Since Steps and Leaves call this automatically in their constructors,
+you shouldn't need to call this manually when constructing a rendering tree.</li>
+</ul><h4>
+<a name="public-properties-2" class="anchor" href="#public-properties-2"><span class="octicon octicon-link"></span></a>Public Properties</h4>
+
+<ul>
+<li>
+<code>context</code> is the Step's Context object.</li>
+<li>
+<code>parent</code> is the Step's parent.</li>
+</ul><h3>
+<a name="batchglleaf" class="anchor" href="#batchglleaf"><span class="octicon octicon-link"></span></a>BatchGL.Leaf</h3>
+
+<p>The Leaf class defines the leaves of a rendering tree, and are what do the
+actual buffering and drawing of vertices. Leaves should ideally be cheap to
+switch: binding things like uniforms here is a good idea.</p>
+
+<h4>
+<a name="public-methods-3" class="anchor" href="#public-methods-3"><span class="octicon octicon-link"></span></a>Public Methods</h4>
+
+<ul>
+<li>
+<code>new Leaf(parent)</code> creates a new Leaf object underneath the given Root or
+Step parent. It also calls the overridable <code>.init()</code> method inherited from
+TreeNode.</li>
+<li>
+<code>.buffer(vertexSet)</code> is an overriddable method stub for buffering VertexSet
+instances. You should put WebGL buffering calls in here.</li>
+<li>
+<code>flush()</code> is an overridable method stub for flushing buffered vertices. You
+should put WebGL draw calls here.</li>
+<li>
+<code>.render()</code>, much like the other TreeNode rendering methods, calls the Leaf's
+<code>.run()</code> method. However, the similarities stop there: it then calls its own
+<code>.buffer()</code> method on each buffered VertexSet, and assuming that it buffered
+some vertices, then calls <code>.flush()</code>.</li>
+</ul><h4>
+<a name="framework-reserved-methods-3" class="anchor" href="#framework-reserved-methods-3"><span class="octicon octicon-link"></span></a>Framework-Reserved Methods</h4>
+
+<ul>
+<li>
+<code>._bufferVertex()</code> buffers a VertexSet into the Leaf's rendering queue.
+VertexSets call this method automatically when you call their <code>.buffer()</code>
+method, so you should never have to call this yourself.</li>
+</ul><h4>
+<a name="public-properties-3" class="anchor" href="#public-properties-3"><span class="octicon octicon-link"></span></a>Public Properties</h4>
+
+<ul>
+<li>
+<code>parent</code> is the Leaf's TreeNode parent.</li>
+<li>
+<code>context</code> is the Leaf's Context object.</li>
+</ul><h3>
+<a name="batchglvertexset" class="anchor" href="#batchglvertexset"><span class="octicon octicon-link"></span></a>BatchGL.VertexSet</h3>
+
+<p>The VertexSet class defines a set of vertices for a particular leaf in the
+rendering tree. VertexSets are easy objects to pass around, and you can just
+call their <code>.buffer()</code> method when you want to tell the rendering tree that you
+want to render the set. Whenever you want to flush the frame, calling
+<code>.render()</code> on the tree's root node will flush all of the buffered vertices.</p>
+
+<h4>
+<a name="public-methods-4" class="anchor" href="#public-methods-4"><span class="octicon octicon-link"></span></a>Public Methods</h4>
+
+<ul>
+<li>
+<code>new VertexSet(leaf, vertices)</code> creates a new VertexSet for the given leaf.
+The vertices array is an optional array of numeric vertices; if you don't
+pass one into the constructor, you'll have to pass one in later with a
+<code>.setVertices</code> call before attempting to buffer the set.</li>
+<li>
+<code>.setVertices(vertices)</code> takes an array of numeric vertices, and creates a
+Float32Array out of them and assigns it to the <code>vertices</code> property.</li>
+<li>
+<code>.buffer()</code> buffers the vertex into its Leaf parent for rendering. Note that
+it won't actually be rendered until a subsequent <code>.render()</code> call on the root
+of the rendering tree (which you should probably call at the end of your
+frame).</li>
+</ul><h4>
+<a name="public-properties-4" class="anchor" href="#public-properties-4"><span class="octicon octicon-link"></span></a>Public Properties</h4>
+
+<ul>
+<li>
+<code>leaf</code> is the parent Leaf object.</li>
+<li>
+<code>vertices</code> is a Float32Array of vertices.</li>
+</ul><h2>
+<a name="development-notes" class="anchor" href="#development-notes"><span class="octicon octicon-link"></span></a>Development Notes</h2>
+
+<p>To run the tests, make sure you've run an <code>npm install</code> at some point, and then
+run <code>script/test 8000</code> (or pass in the numerical port of your choice).</p>
+
+<p>If you want to peruse the code, tell me about bugs, or submit patches: <a href="https://github.com/reissbaker/batchgl">a link
+to the repo</a>.</p>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/reissbaker">reissbaker</a></p>
