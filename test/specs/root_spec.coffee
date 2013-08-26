@@ -9,6 +9,13 @@ describe 'Root', ->
         init: -> done()
       new Derived({})
 
+    it 'should pass arguments along to init', (done) ->
+      class Derived extends Root
+        init: (context, data) ->
+          expect(data).to.equal 5
+          done()
+      new Derived({}, 5)
+
   describe 'add', ->
     it 'should add the child to the children', ->
       r = new Root({})

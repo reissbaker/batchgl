@@ -21,6 +21,13 @@ describe 'Step', ->
       step = new Step(root)
       expect(root.children[0]).to.equal(step)
 
+    it 'should pass arguments along to init', (done) ->
+      class Derived extends Step
+        init: (parent, data) ->
+          expect(data).to.equal 5
+          done()
+      new Derived(root, 5)
+
   describe 'add', ->
     it 'should add its child to its children', ->
       step = new Step(root)

@@ -27,6 +27,12 @@ describe 'VertexSet', ->
       expect(v.vertices.length).to.equal(2)
     it 'should not require vertices to be passed in', ->
       v = new VertexSet(leaf)
+    it 'should call init', (done) ->
+      class Derived extends VertexSet
+        init: (parent, vertices, data) ->
+          expect(data).to.equal 5
+          done()
+      new Derived(leaf, null, 5)
 
   describe 'setVertices', ->
     it 'should set vertices passed in', ->

@@ -12,25 +12,23 @@
       var Derived,
           Temp = function() {};
 
-      if(typeof derived !== 'function') Derived = extendingConstructor(Base);
-      else Derived = derived;
+      Derived = ownConstructor(derived) || extendingConstructor(Base);
 
       Temp.prototype = Base.prototype;
       Derived.prototype = new Temp;
-      Derived.prototype.constructor = Derived;
 
-      if(typeof derived === 'object') mixin(Derived.prototype, derived);
+      mixin(Derived.prototype, derived);
+      Derived.prototype.constructor = Derived;
       mixin(Derived, Base);
 
       return Derived;
-    },
-    _extendable: function(Base) {
-      Base.extend = function(Derived) {
-        return BatchGL.extend(this, Derived);
-      };
-      return Base;
     }
   };
+
+  function ownConstructor(derived) {
+    if(derived.hasOwnProperty('constructor')) return derived.constructor;
+    return null;
+  }
 
   function extendingConstructor(Base) {
     return function() { Base.apply(this, arguments); };
@@ -48,44 +46,54 @@
 !function(exports) {
   'use strict';
 
+  function Extendable() { this.init.apply(this, arguments); }
+  Extendable.prototype.init = function() {};
+  Extendable.extend = function(Derived) {
+    return exports.extend(this, Derived);
+  };
+
+  exports.Extendable = Extendable;
+
+}(BatchGL);
+!function(exports) {
+  'use strict';
+
   var WEBGL_CTX = 'webgl',
       VENDOR_WEBGL_CTX = 'experimental-webgl';
 
 
+  var Extendable = exports.Extendable;
 
   /*
-   * Constructor
+   * Class Definition
    * ---------------------------------------------------------------------------
    */
 
-  exports._extendable(Context);
-  function Context(canvas, vertexShader, fragmentShader) {
-    this.canvas = canvas;
-    this.gl = initWebGl(this.canvas);
-  }
+  var Context = Extendable.extend({
+    constructor: function(canvas) {
+      this.canvas = canvas;
+      this.gl = initWebGl(this.canvas);
+      Extendable.apply(this, arguments);
+    },
 
 
-  /*
-   * Methods
-   * ---------------------------------------------------------------------------
-   */
+    /*
+     * ### updateSize
+     *
+     * Updates the instance's size, and the size of its WebGL context. You must
+     * call this method if you manually add the canvas element to the DOM with the
+     * `el()` method, rather than using `appendTo`.
+     */
 
-  /*
-   * ### updateSize
-   *
-   * Updates the instance's size, and the size of its WebGL context. You must
-   * call this method if you manually add the canvas element to the DOM with the
-   * `el()` method, rather than using `appendTo`.
-   */
+    updateSize: function() {
+      var canvas = this.canvas;
 
-  Context.prototype.updateSize = function() {
-    var canvas = this.canvas;
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
 
-    canvas.width = canvas.clientWidth;
-    canvas.height = canvas.clientHeight;
-
-    this.gl.viewport(0, 0, canvas.width, canvas.height);
-  };
+      this.gl.viewport(0, 0, canvas.width, canvas.height);
+    }
+  });
 
 
   /*
@@ -116,14 +124,10 @@
 !function(exports) {
   'use strict';
 
-  exports._extendable(TreeNode);
-  function TreeNode() {
-    this.init.apply(this, arguments);
-  }
-
-  TreeNode.prototype.init = function() {};
-  TreeNode.prototype.run = function() {};
-  TreeNode.prototype.render = function() {};
+  var TreeNode = exports.Extendable.extend({
+    run: function() {},
+    render: function() {}
+  });
 
   exports.TreeNode = TreeNode;
 
@@ -133,32 +137,24 @@
 
   var TreeNode = exports.TreeNode;
 
-  TreeNode.extend(Root);
-  function Root(context) {
-    this.context = context;
-    this.children = [];
+  var Root = TreeNode.extend({
+    constructor: function(context) {
+      this.context = context;
+      this.children = [];
 
-    TreeNode.apply(this, arguments);
-  }
-
-
-  /*
-   * Methods
-   * ---------------------------------------------------------------------------
-   */
-
-  Root.prototype.render = function() {
-    this.run();
-    for(var i = 0, l = this.children.length; i < l; i++) {
-      this.children[i].render();
+      TreeNode.apply(this, arguments);
+    },
+    render: function() {
+      this.run();
+      for(var i = 0, l = this.children.length; i < l; i++) {
+        this.children[i].render();
+      }
+    },
+    add: function(child) {
+      this.children.push(child);
+      child.context = this.context;
     }
-  };
-
-  Root.prototype.add = function(child) {
-    this.children.push(child);
-    child.context = this.context;
-  };
-
+  });
 
   exports.Root = Root;
 
@@ -168,28 +164,27 @@
 
   var TreeNode = exports.TreeNode;
 
-  TreeNode.extend(Step);
-  function Step(parent) {
-    this.context = null;
-    this.parent = parent;
-    this.children = [];
+  var Step = TreeNode.extend({
+    constructor: function(parent) {
+      this.context = null;
+      this.parent = parent;
+      this.children = [];
 
-    parent.add(this);
+      parent.add(this);
 
-    TreeNode.apply(this, arguments);
-  }
-
-  Step.prototype.render = function() {
-    this.run();
-    for(var i = 0, l = this.children.length; i < l; i++) {
-      this.children[i].render();
+      TreeNode.apply(this, arguments);
+    },
+    render: function() {
+      this.run();
+      for(var i = 0, l = this.children.length; i < l; i++) {
+        this.children[i].render();
+      }
+    },
+    add: function(child) {
+      this.children.push(child);
+      child.context = this.context;
     }
-  };
-
-  Step.prototype.add = function(child) {
-    this.children.push(child);
-    child.context = this.context;
-  };
+  });
 
   exports.Step = Step;
 
@@ -199,38 +194,34 @@
 
   var TreeNode = exports.TreeNode;
 
-  TreeNode.extend(Leaf);
-  function Leaf(parent) {
-    this.parent = parent;
-    this.context = null;
-    this._buffer = [];
+  var Leaf = TreeNode.extend({
+    constructor: function(parent) {
+      this.parent = parent;
+      this.context = null;
+      this._buffer = [];
 
-    parent.add(this);
+      parent.add(this);
 
-    TreeNode.apply(this, arguments);
-  }
+      TreeNode.apply(this, arguments);
+    },
 
+    _bufferVertex: function(vSet) {
+      this._buffer.unshift(vSet);
+    },
 
-  /*
-   * Methods
-   * ---------------------------------------------------------------------------
-   */
+    render: function() {
+      var buffered = this._buffer.length !== 0;
+      this.run();
+      while(this._buffer.length > 0) {
+        this.buffer(this._buffer.pop());
+      }
+      if(buffered) this.flush();
+    },
 
-  Leaf.prototype._bufferVertex = function(vertexSet) {
-    this._buffer.unshift(vertexSet);
-  };
+    buffer: function(vSet) {},
+    flush: function() {}
+  });
 
-  Leaf.prototype.render = function() {
-    var buffered = this._buffer.length !== 0;
-    this.run();
-    while(this._buffer.length > 0) {
-      this.buffer(this._buffer.pop());
-    }
-    if(buffered) this.flush();
-  };
-
-  Leaf.prototype.buffer = function(vertexSet) {};
-  Leaf.prototype.flush = function() {};
 
   exports.Leaf = Leaf;
 
@@ -238,27 +229,24 @@
 !function(exports) {
   'use strict';
 
-  exports._extendable(VertexSet);
-  function VertexSet(leaf, vertices) {
-    this.leaf = leaf;
-    this.vertices = null;
+  var Extendable = exports.Extendable;
 
-    if(vertices) this.setVertices(vertices);
-  }
+  var VertexSet = Extendable.extend({
+    constructor: function(leaf, vertices) {
+      this.leaf = leaf;
+      this.vertices = null;
 
+      if(vertices) this.setVertices(vertices);
 
-  /*
-   * Methods
-   * ---------------------------------------------------------------------------
-   */
-
-  VertexSet.prototype.setVertices = function(vertices) {
-    this.vertices = new Float32Array(vertices);
-  };
-
-  VertexSet.prototype.buffer = function() {
-    this.leaf._bufferVertex(this);
-  };
+      Extendable.apply(this, arguments);
+    },
+    setVertices: function(vertices) {
+      this.vertices = new Float32Array(vertices);
+    },
+    buffer: function() {
+      this.leaf._bufferVertex(this);
+    }
+  });
 
   exports.VertexSet = VertexSet;
 
