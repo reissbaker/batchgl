@@ -2,6 +2,7 @@ build/batchgl.js:
 	mkdir -p build
 	cat \
 		lib/index.js \
+		lib/extendable.js \
 		lib/context.js \
 		lib/treenode.js \
 		lib/root.js \
