@@ -1,6 +1,6 @@
 {
   "name": "batchgl",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A library for easy WebGL batching.",
   "license": "MIT",
   "keywords": [
