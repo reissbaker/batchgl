@@ -29,30 +29,16 @@ describe 'Leaf', ->
       new Derived(step, 5)
 
   describe 'render', ->
-    it 'should buffer any vertices it knows about', (done) ->
+    it 'should flush any vertices it knows about', (done) ->
       leaf = new Leaf(step)
       vSet = new VertexSetMock
       vSet2 = new VertexSetMock
       leaf._bufferVertex(vSet)
       leaf._bufferVertex(vSet2)
-      leaf.buffer = (v) ->
+      leaf.flush = (v) ->
         expect(v).to.equal(vSet)
-        leaf.buffer = (v) ->
+        leaf.flush = (v) ->
           expect(v).to.equal(vSet2)
           done()
 
       leaf.render()
-
-    it 'should flush if vertices were buffered', (done) ->
-      leaf = new Leaf(step)
-      vSet = new VertexSetMock
-      leaf._bufferVertex(vSet)
-      leaf.flush = -> done()
-      leaf.render()
-
-    it 'shouldn\'t flush it vertices weren\'t buffered', (done) ->
-      leaf = new Leaf(step)
-      leaf.flush = -> done()
-      done()
-      leaf.render() # will cause double-done error if it flushes
-

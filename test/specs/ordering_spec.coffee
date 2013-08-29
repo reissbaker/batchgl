@@ -17,8 +17,7 @@ class TattletaleVertexSet extends VertexSet
     @id = count++
 
 class SpyingLeaf extends Leaf
-  buffer: (v) -> buffered[v.id] = bufferedCount++
-  flush: -> flushed = true
+  flush: (v) -> buffered[v.id] = bufferedCount++
 
 class Overlord extends Root
   init: ->

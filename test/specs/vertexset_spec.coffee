@@ -17,33 +17,6 @@ describe 'VertexSet', ->
     step = new Step(root)
     leaf = new Leaf(step)
 
-  describe 'constructor', ->
-    it 'should set any vertices passed in', ->
-      vertices = [0, 0]
-      v = new VertexSet(leaf, vertices)
-      expect(v.vertices).to.be.an.instanceof(Float32Array)
-      expect(v.vertices[0]).to.equal(0)
-      expect(v.vertices[1]).to.equal(0)
-      expect(v.vertices.length).to.equal(2)
-    it 'should not require vertices to be passed in', ->
-      v = new VertexSet(leaf)
-    it 'should call init', (done) ->
-      class Derived extends VertexSet
-        init: (parent, vertices, data) ->
-          expect(data).to.equal 5
-          done()
-      new Derived(leaf, null, 5)
-
-  describe 'setVertices', ->
-    it 'should set vertices passed in', ->
-      vertices = [1, 2]
-      v = new VertexSet(leaf)
-      v.setVertices(vertices)
-      expect(v.vertices).to.be.an.instanceof(Float32Array)
-      expect(v.vertices[0]).to.equal(1)
-      expect(v.vertices[1]).to.equal(2)
-      expect(v.vertices.length).to.equal(2)
-
   describe 'buffer', ->
     beforeEach ->
       leaf.buffer = ->
@@ -52,11 +25,9 @@ describe 'VertexSet', ->
       buffered = false
       v = new VertexSet(leaf)
       v.buffer()
-      leaf.buffer = (set) ->
+      leaf.flush = (set) ->
         expect(set).to.equal(v)
         buffered = true
-      leaf.flush = ->
-        expect(buffered).to.be.true
         done()
       leaf.render()
 
