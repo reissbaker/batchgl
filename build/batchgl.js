@@ -229,9 +229,80 @@
 
   var Extendable = exports.Extendable;
 
+  exports.Memory = Extendable.extend({
+    constructor: function(arrayish) {
+      this.memory = arrayish;
+      Extendable.apply(this, arguments);
+    },
+    get: function(i) {
+      return this.memory[i];
+    },
+    set: function(i, val) {
+      this.memory[i] = val;
+      return val;
+    }
+  });
+
+}(BatchGL);
+!function(exports) {
+  'use strict';
+
+  var Memory = exports.Memory;
+
+  exports.MemoryBlock = Memory.extend({
+    constructor: function(arrayish, start) {
+      this.start = start || 0;
+      Memory.apply(this, arguments);
+    },
+    get: function(i) {
+      return this.memory[this.start + i];
+    },
+    set: function(i, val) {
+      this.memory[this.start + i] = val;
+      return val;
+    }
+  });
+
+}(BatchGL);
+!function(exports) {
+  'use strict';
+
+  var MemoryBlock = exports.MemoryBlock;
+
+  var BOUNDS_CHECK_ERROR = 'Attempt to access illegal MemoryBlock location: ';
+
+  exports.SafeMemoryBlock = MemoryBlock.extend({
+    constructor: function(arrayish, start, length) {
+      this.end = (start || 0) + (length || arrayish.length) - 1;
+      MemoryBlock.apply(this, arguments);
+    },
+    get: function(i) {
+      var loc = this.start + i;
+      if(loc < this.start || loc > this.end) {
+        throw new Error(BOUNDS_CHECK_ERROR + loc + '.');
+      }
+      return this.memory[this.start + i];
+    },
+    set: function(i, val) {
+      var loc = this.start + i;
+      if(loc < this.start || loc > this.end) {
+        throw new Error(BOUNDS_CHECK_ERROR + loc + '.');
+      }
+      this.memory[this.start + i] = val;
+      return val;
+    }
+  });
+
+}(BatchGL);
+!function(exports) {
+  'use strict';
+
+  var Extendable = exports.Extendable;
+
   var VertexSet = Extendable.extend({
-    constructor: function(leaf, vertices) {
+    constructor: function(leaf, memory) {
       this.leaf = leaf;
+      this.memory = memory;
 
       Extendable.apply(this, arguments);
     },

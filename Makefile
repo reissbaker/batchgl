@@ -17,6 +17,9 @@ build/batchgl.js:
 		lib/root.js \
 		lib/step.js \
 		lib/leaf.js \
+		lib/memory.js \
+		lib/memoryblock.js \
+		lib/safememoryblock.js \
 		lib/vertices.js \
 		> $@
 
