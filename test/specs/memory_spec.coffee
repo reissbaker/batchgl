@@ -4,8 +4,8 @@
 describe 'Memory', ->
   describe 'constructor', ->
     it 'should take an arrayish and save it as its memory', ->
-      m = new Memory([])
-      expect(m.memory).to.eql []
+      m = new Memory([1])
+      expect(m.store).to.eql [1]
 
   describe 'get', ->
     it 'should get items at the given index', ->
